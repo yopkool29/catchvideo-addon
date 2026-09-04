@@ -1,0 +1,59 @@
+{
+  "manifest_version": 3,
+  "name": "Catchvideo.net Lite",
+  "description": "Catchvideo.net Lite — direct video downloads from the browser (limited sites)",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "catchvideo-net-lite@local",
+      "strict_min_version": "128.0"
+    }
+  },
+  "permissions": [
+    "declarativeNetRequest",
+    "downloads",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*",
+    "*://*.youtu.be/*",
+    "*://*.dailymotion.com/*",
+    "*://*.vimeo.com/*",
+    "*://*.googlevideo.com/*",
+    "*://*.google.com/*",
+    "*://*.dmcdn.net/*",
+    "*://*.vimeocdn.com/*",
+    "*://*.streamable.com/*"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_1",
+        "enabled": true,
+        "path": "lite/rules.json"
+      }
+    ]
+  },
+  "background": {
+    "scripts": ["src/lite/background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://localhost/*", "*://127.0.0.1/*", "*://catchvideo.net/*", "*://*.catchvideo.net/*"],
+      "js": ["src/lite/content-relay.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://*.youtube.com/*", "*://*.youtu.be/*"],
+      "js": ["src/lite/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": {
+    "page": "src/lite/options.html"
+  },
+  "icons": {
+    "16": "src/icons/icon16.png",
+    "32": "src/icons/icon32.png",
+    "48": "src/icons/icon48.png"
+  }
+}

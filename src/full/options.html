@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<style>
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			font-size: 14px;
+			max-width: 480px;
+			margin: 24px auto;
+			padding: 0 16px;
+			color: #1a1a2e;
+		}
+		h1 {
+			font-size: 18px;
+			margin-bottom: 16px;
+		}
+		.row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 12px 0;
+			border-bottom: 1px solid #e5e5e5;
+		}
+		label {
+			cursor: pointer;
+			user-select: none;
+		}
+		.toggle {
+			position: relative;
+			width: 40px;
+			height: 22px;
+			background: #ccc;
+			border-radius: 11px;
+			transition: background 0.2s;
+			cursor: pointer;
+			flex-shrink: 0;
+		}
+		.toggle.on {
+			background: #10b981;
+		}
+		.toggle::after {
+			content: '';
+			position: absolute;
+			top: 2px;
+			left: 2px;
+			width: 18px;
+			height: 18px;
+			background: #fff;
+			border-radius: 50%;
+			transition: transform 0.2s;
+		}
+		.toggle.on::after {
+			transform: translateX(18px);
+		}
+		.desc {
+			font-size: 12px;
+			color: #666;
+			margin-top: 4px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Catchvideo.net</h1>
+	<div class="row">
+		<div>
+			<label for="toggle">Show Catch button on YouTube</label>
+			<div class="desc">Display the "Catch!" button next to the Like button</div>
+		</div>
+		<div id="toggle" class="toggle"></div>
+	</div>
+	<script type="module" src="options.js"></script>
+</body>
+</html>

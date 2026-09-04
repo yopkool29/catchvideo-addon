@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Catchvideo.net",
+  "description": "Catchvideo.net — enables direct video downloads from the browser",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "catchvideo-net@local",
+      "strict_min_version": "115.0"
+    }
+  },
+  "permissions": [
+    "cookies",
+    "webRequest",
+    "webRequestBlocking",
+    "downloads",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "background": {
+    "scripts": ["src/background.js"]
+  },
+  "options_ui": {
+    "page": "src/options.html"
+  },
+  "icons": {
+    "16": "src/icons/icon16.png",
+    "32": "src/icons/icon32.png",
+    "48": "src/icons/icon48.png"
+  }
+}

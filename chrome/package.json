@@ -1,0 +1,26 @@
+{
+ "name": "catchvideo-button-chrome",
+ "version": "3.0.0",
+ "description": "CatchVideo Button \u2014 Chrome Extension",
+ "type": "module",
+ "private": true,
+ "scripts": {
+  "dev": "vite dev",
+  "build:dev": "vite build --mode dev && ADDON_MODE=dev node scripts/copy-assets.js",
+  "build:dev:lite": "ADDON_VARIANT=lite vite build --mode dev && ADDON_VARIANT=lite ADDON_MODE=dev node scripts/copy-assets.js",
+  "build:beta": "vite build --mode beta && ADDON_MODE=beta node scripts/copy-assets.js",
+  "build:beta:lite": "ADDON_VARIANT=lite vite build --mode beta && ADDON_VARIANT=lite ADDON_MODE=beta node scripts/copy-assets.js",
+  "build:prod": "vite build --mode prod && ADDON_MODE=prod node scripts/copy-assets.js && ADDON_MODE=prod node scripts/package.js",
+  "build:prod:lite": "ADDON_VARIANT=lite vite build --mode prod && ADDON_VARIANT=lite ADDON_MODE=prod node scripts/copy-assets.js && ADDON_VARIANT=lite ADDON_MODE=prod node scripts/package.js",
+  "package": "node scripts/package.js",
+  "preview": "vite preview",
+  "watch": "node scripts/watch.js",
+  "watch:dev": "node scripts/watch.js dev",
+  "watch:beta": "node scripts/watch.js beta",
+  "watch:prod": "node scripts/watch.js prod"
+ },
+ "devDependencies": {
+  "vite": "^6.3.5",
+  "vite-plugin-web-extension": "^4.5.1"
+ }
+}

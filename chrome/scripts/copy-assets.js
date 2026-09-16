@@ -69,3 +69,11 @@ if (existsSync(otherDir)) {
 	rmSync(otherDir, { recursive: true })
 	console.log(`copy-assets: removed ${otherVariant}/ (not needed for ${variant} build)`)
 }
+
+// --- 4. Remove Vite virtual-module artifacts (empty sourcemaps, not shippable) ---
+for (const entry of readdirSync(dist)) {
+	if (entry.startsWith('virtual:')) {
+		rmSync(join(dist, entry))
+		console.log(`  removed artifact: ${entry}`)
+	}
+}

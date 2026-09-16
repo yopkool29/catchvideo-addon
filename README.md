@@ -1,101 +1,64 @@
-# CatchVideo Button — Firefox Addon
+# CatchVideo Addon
 
-Extension Firefox qui ajoute un bouton "Catch!" sur YouTube pour télécharger
-vidéos et audio via catchvideo.net. L'addon fait aussi office de proxy CORS/UA
-pour que le site puisse fetch les streams directement.
+Browser extensions that add a **Catch!** button on YouTube and act as a
+CORS/UA proxy so catchvideo.net can fetch video streams directly.
+
+This repository is a submodule of [catchvideo4.net](https://github.com/yopkool29/catchvideo4.net)
+mounted at `addon/`.
 
 ## Structure
 
 ```
 addon/
-├── src/
-│   ├── icons/              # icônes PNG
-│   ├── content.js          # bouton sur YouTube (utilise __SITE_URL__)
-│   ├── background.js       # service worker (proxy CORS/UA/cookies)
-│   ├── content-relay.js    # relay messages page ↔ background
-│   ├── options.html        # page d'options (toggle bouton)
-│   └── options.js
-├── scripts/
-│   ├── copy-assets.js      # post-build: copie icônes + aplatit dist/
-│   └── watch.js            # watch mode avec rebuild auto
-├── manifest.json           # template de base (champs communs)
-├── vite.config.js          # config Vite + 3 modes (dev/beta/prod)
-└── package.json
+├── firefox/          # Firefox addon (MV3, .xpi for AMO)
+│   ├── manifest.json / manifest.full.json / manifest.lite.json
+│   ├── src/          # full/ + lite/ variants, shared icons
+│   ├── scripts/      # copy-assets, package (.xpi), watch
+│   └── vite.config.js
+└── chrome/           # Chrome extension (MV3, .zip for the Web Store)
+    ├── manifest.full.json
+    ├── manifest.lite.json
+    ├── src/          # same layout — full background uses DNR session rules
+    ├── scripts/
+    └── package.json
 ```
 
-## Prérequis
+## Variants
 
-- Node.js 20+
-- pnpm 10+
-
-```bash
-cd addon
-pnpm install
-```
+| Variant | Permissions | Scope |
+|---|---|---|
+| **full** | cookies + header injection (Firefox: webRequestBlocking, Chrome: DNR session rules) | all supported sites |
+| **lite** | declarativeNetRequest only | limited sites, no header injection |
 
 ## Build
 
-Trois modes selon l'environnement cible :
-
-| Mode | SITE_URL | Relay matches | Homepage |
-|------|----------|---------------|----------|
-| `dev` | `http://localhost:3005` | `http://localhost/*` | — |
-| `beta` | `https://beta.catchvideo.net` | `https://*.beta.catchvideo.net/*` | `https://beta.catchvideo.net` |
-| `prod` | `https://catchvideo.net` | `https://*.catchvideo.net/*` | `https://catchvideo.net` |
+Three modes per browser: `dev` (localhost:3005), `beta` (beta4.catchvideo.net),
+`prod` (catchvideo.net).
 
 ```bash
-pnpm build:dev    # → dist/ (localhost)
-pnpm build:beta   # → dist/ (beta.catchvideo.net)
-pnpm build:prod   # → dist/ (catchvideo.net)
+# Firefox
+cd firefox && pnpm install
+pnpm build:prod            # → dist/prod-full/ + .xpi
+pnpm build:prod:lite       # → dist/prod-lite/ + .xpi
+
+# Chrome
+cd chrome && pnpm install
+pnpm build:prod            # → dist/prod-full/ + .zip
+pnpm build:prod:lite       # → dist/prod-lite.zip
 ```
 
-Le build produit un dossier `dist/` plat :
+## Deployment to the website
 
-```
-dist/
-├── manifest.json
-├── background.js
-├── content.js
-├── content-relay.js
-├── options.html
-├── options.js
-└── icons/
-    ├── icon16.png
-    ├── icon32.png
-    └── icon48.png
-```
+The prod packages are served from the website at `/downloads/`:
 
-## Watch mode (rebuild auto)
-
-Rebuild automatique quand un fichier source change :
+1. Build: `pnpm build:prod` (+ `:lite`) in each browser folder
+2. Package: `node scripts/package.js` (with `ADDON_VARIANT=lite` for lite)
+3. Copy to the frontend:
 
 ```bash
-pnpm watch:dev    # watch en mode dev
-pnpm watch:beta   # watch en mode beta
-pnpm watch:prod   # watch en mode prod
+cp firefox/dist/catchvideo-button-*-prod.xpi     ../frontend/public/downloads/catchvideo-firefox.xpi
+cp firefox/dist/catchvideo-button-3.0.0-prod-lite.xpi frontend/public/downloads/catchvideo-firefox-lite.xpi
+cp chrome/dist/catchvideo-button-*.prod.zip frontend/public/downloads/catchvideo-chrome.zip
 ```
 
-Le navigateur ne s'ouvre pas automatiquement (`disableAutoLaunch: true`).
-
-## Charger l'addon dans Firefox
-
-1. Ouvrir `about:debugging#/runtime/this-firefox`
-2. Cliquer "Load Temporary Add-on..."
-3. Sélectionner `dist/manifest.json`
-
-## Soumission AMO (production)
-
-1. `pnpm build:prod`
-2. Zipper le contenu de `dist/` (pas le dossier lui-même) :
-   ```bash
-   cd dist && zip -r ../catchvideo-button-3.0.0.zip . && cd ..
-   ```
-3. Soumettre sur https://addons.mozilla.org/developers/
-4. Voir `docs/ADDON_REVIEW_RISK.md` pour les points de review
-
-## Documentation complémentaire
-
-- `docs/ADDON_DISTRIBUTED_FETCH.md` — architecture détaillée (proxy, mux, LibAV)
-- `docs/ADDON_REVIEW_RISK.md` — risques de review AMO et actions
-- `docs/ADDON_CHROME_OPERA.md` — plan pour Chromium (declarativeNetRequest)
-- `addon/SPECIFICATION.md` — spec originale (POST/GET backend, flux)
+(see `frontend/public/images/addon-debug/README.md` for the exact names)

@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "requestHeaders": [
+        { "header": "Origin", "operation": "remove" }
+      ]
+    },
+    "condition": {
+      "requestDomains": ["youtube.com", "googlevideo.com", "google.com", "youtu.be", "vimeo.com", "vimeocdn.com", "streamable.com"],
+      "resourceTypes": ["xmlhttprequest"]
+    }
+  },
+  {
+    "id": 2,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "requestHeaders": [
+        { "header": "User-Agent", "operation": "set", "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" },
+        { "header": "Referer", "operation": "set", "value": "https://www.dailymotion.com/" },
+        { "header": "Origin", "operation": "set", "value": "https://www.dailymotion.com" }
+      ]
+    },
+    "condition": {
+      "requestDomains": ["dailymotion.com", "dmcdn.net"],
+      "resourceTypes": ["xmlhttprequest"]
+    }
+  }
+]

@@ -107,10 +107,27 @@ const FORBIDDEN_HEADERS = new Set([
 	'accept-encoding', 'content-length', 'upgrade-insecure-requests', 'priority',
 ])
 
+// Per-URL fetch queue: activeConfigs is keyed by URL, so two concurrent
+// fetches to the same URL would overwrite each other's config mid-flight.
+// Different URLs still run in parallel.
+const perUrlLocks = new Map()
+
+function performFetch(args) {
+	const key = args.url || ''
+	const tail = (perUrlLocks.get(key) || Promise.resolve())
+		.catch(() => {})
+		.then(() => performFetchInner(args))
+	perUrlLocks.set(key, tail)
+	tail.finally(() => {
+		if (perUrlLocks.get(key) === tail) perUrlLocks.delete(key)
+	})
+	return tail
+}
+
 // Unified fetch: used by both the browser proxy (catchvideo-fetch) and
 // the download path (fetch-with-headers). Body is base64 in/out.
 // Splits headers into standard (fetch) vs forbidden (webRequest injection).
-async function performFetch({ url, method, headers, body, stripHeaders, injectHeaders }) {
+async function performFetchInner({ url, method, headers, body, stripHeaders, injectHeaders }) {
 	const allHeaders = headers || {}
 	const userAgent = allHeaders['User-Agent'] || allHeaders['user-agent'] || ''
 

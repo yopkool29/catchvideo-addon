@@ -26,8 +26,12 @@ async function applySessionRule(url, { userAgent, stripHeaders, injectHeaders })
 	const toStrip = new Set((stripHeaders || []).map(h => h.toLowerCase()))
 	// ...plus browser-added headers that reveal this is an extension request.
 	// Twitter and other APIs block requests with Origin: chrome-extension://...
+	// Exception: a header explicitly injected by the caller is set, not stripped —
+	// a 'remove' op on the same header wins over 'set' in one DNR rule, which
+	// would silently drop it (Dailymotion GraphQL 401s without Origin).
+	const injected = new Set(Object.keys(injectHeaders || {}).map(h => h.toLowerCase()))
 	for (const h of ['origin', 'sec-fetch-mode', 'sec-fetch-site', 'sec-fetch-user', 'sec-fetch-dest']) {
-		toStrip.add(h)
+		if (!injected.has(h)) toStrip.add(h)
 	}
 	for (const header of toStrip) {
 		requestHeaders.push({ header, operation: 'remove' })
@@ -94,10 +98,27 @@ const FORBIDDEN_HEADERS = new Set([
 	'accept-encoding', 'content-length', 'upgrade-insecure-requests', 'priority',
 ])
 
+// Per-URL fetch queue: the session rule is keyed by URL, so two concurrent
+// fetches to the same URL would overwrite/clear each other's rule mid-flight.
+// Different URLs still run in parallel.
+const perUrlLocks = new Map()
+
+function performFetch(args) {
+	const key = args.url || ''
+	const tail = (perUrlLocks.get(key) || Promise.resolve())
+		.catch(() => {})
+		.then(() => performFetchInner(args))
+	perUrlLocks.set(key, tail)
+	tail.finally(() => {
+		if (perUrlLocks.get(key) === tail) perUrlLocks.delete(key)
+	})
+	return tail
+}
+
 // Unified fetch: used by both the browser proxy (catchvideo-fetch) and
 // the download path (fetch-with-headers). Body is base64 in/out.
 // Splits headers into standard (fetch) vs forbidden (DNR session rule).
-async function performFetch({ url, method, headers, body, stripHeaders, injectHeaders }) {
+async function performFetchInner({ url, method, headers, body, stripHeaders, injectHeaders }) {
 	const allHeaders = headers || {}
 	const userAgent = allHeaders['User-Agent'] || allHeaders['user-agent'] || ''
 

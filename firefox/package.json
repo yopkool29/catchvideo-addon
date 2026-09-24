@@ -1,7 +1,7 @@
 {
-  "name": "catchvideo-button-addon",
+  "name": "catchvideo-addon-firefox",
   "version": "3.0.0",
-  "description": "CatchVideo Button \u2014 Firefox addon for one-click video downloads",
+  "description": "CatchVideo Addon \u2014 Firefox addon for one-click video downloads",
   "type": "module",
   "private": true,
   "scripts": {

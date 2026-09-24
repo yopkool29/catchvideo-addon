@@ -1,4 +1,4 @@
-# CatchVideo Button — Firefox Addon
+# CatchVideo Addon — Firefox Addon
 
 Extension Firefox qui ajoute un bouton "Catch!" sur YouTube pour télécharger
 vidéos et audio via catchvideo.net. L'addon fait aussi office de proxy CORS/UA
@@ -88,7 +88,7 @@ Le navigateur ne s'ouvre pas automatiquement (`disableAutoLaunch: true`).
 1. `pnpm build:prod`
 2. Zipper le contenu de `dist/` (pas le dossier lui-même) :
    ```bash
-   cd dist && zip -r ../catchvideo-button-3.0.0.zip . && cd ..
+   cd dist && zip -r ../catchvideo-addon-3.0.0.zip . && cd ..
    ```
 3. Soumettre sur https://addons.mozilla.org/developers/
 4. Voir `docs/ADDON_REVIEW_RISK.md` pour les points de review

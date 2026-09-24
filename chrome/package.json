@@ -1,7 +1,7 @@
 {
- "name": "catchvideo-button-chrome",
+ "name": "catchvideo-addon-chrome",
  "version": "3.0.0",
- "description": "CatchVideo Button \u2014 Chrome Extension",
+ "description": "CatchVideo Addon \u2014 Chrome Extension",
  "type": "module",
  "private": true,
  "scripts": {

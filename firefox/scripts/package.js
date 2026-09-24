@@ -12,7 +12,7 @@ const mode = process.env.ADDON_MODE || 'dev'
 const dist = join(root, 'dist', `${mode}-${variant}`)
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
 const variantSuffix = variant === 'lite' ? '-lite' : ''
-const outFile = join(root, `dist/catchvideo-button-${pkg.version}-${mode}${variantSuffix}.xpi`)
+const outFile = join(root, `dist/catchvideo-addon-${pkg.version}-${mode}${variantSuffix}.xpi`)
 
 // Use the system zip command — reliable and no dependency needed.
 // -r = recursive, -X = exclude extra file attributes (portable zip)

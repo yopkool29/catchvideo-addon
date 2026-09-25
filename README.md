@@ -49,16 +49,20 @@ pnpm build:prod:lite       # → dist/prod-lite.zip
 
 ## Deployment to the website
 
-The prod packages are served from the website at `/downloads/` under public
-names — `pnpm build:prod`/`build:prod:lite` already run the package step, so
-just copy-and-rename:
+The packages are served from the website at `/downloads/` under public names
+that keep the channel — `catchvideo-addon-{beta,prod}{-lite}.{zip,xpi}` — so
+the served channel can never be mixed up. The frontend picks `-beta` or
+`-prod` via `NUXT_PUBLIC_ADD_ON_BETA`. Copy both channels after building
+(`build:prod`/`build:beta` already run the package step):
 
 ```bash
 cd addon
-cp firefox/dist/catchvideo-addon-3.0.0-prod.xpi      ../frontend/public/downloads/catchvideo-firefox.xpi
-cp firefox/dist/catchvideo-addon-3.0.0-prod-lite.xpi ../frontend/public/downloads/catchvideo-firefox-lite.xpi
-cp chrome/dist/catchvideo-addon-3.0.0-prod.zip       ../frontend/public/downloads/catchvideo-chrome.zip
-cp chrome/dist/catchvideo-addon-3.0.0-prod-lite.zip  ../frontend/public/downloads/catchvideo-chrome-lite.zip
+for ch in beta prod; do
+  cp chrome/dist/catchvideo-addon-*-$ch.zip           ../frontend/public/downloads/catchvideo-addon-$ch.zip
+  cp chrome/dist/catchvideo-addon-*-$ch-lite.zip      ../frontend/public/downloads/catchvideo-addon-$ch-lite.zip
+  cp firefox/dist/catchvideo-addon-*-$ch.xpi          ../frontend/public/downloads/catchvideo-addon-$ch.xpi
+  cp firefox/dist/catchvideo-addon-*-$ch-lite.xpi     ../frontend/public/downloads/catchvideo-addon-$ch-lite.xpi
+done
 ```
 
 (see `frontend/public/images/addon-debug/README.md` for the exact names)

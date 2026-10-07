@@ -29,7 +29,7 @@
 	// Build the site URL with the current page URL as a parameter
 	// The site decides what to do with it (extract, search, etc.)
 	function buildSiteLinkUrl() {
-		return `${SITE_URL}/?url=${encodeURIComponent(window.location.href)}`
+		return `${SITE_URL}/?addon&url=${encodeURIComponent(window.location.href)}`
 	}
 
 	// Inject a "Catch" button next to the Like button on YouTube watch pages

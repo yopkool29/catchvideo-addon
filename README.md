@@ -1,7 +1,7 @@
 # CatchVideo Addon
 
 Browser extensions that add a **Catch!** button on YouTube and act as a
-CORS/UA proxy so catchvideo.net can fetch video streams directly.
+CORS/UA proxy so [catchvideo.net](https://catchvideo.net) can fetch video streams directly.
 
 This repository is a submodule of [catchvideo4.net](https://github.com/yopkool29/catchvideo4.net)
 mounted at `addon/`.
@@ -32,8 +32,7 @@ addon/
 
 ## Build
 
-Three modes per browser: `dev` (localhost:3005), `beta` (beta4.catchvideo.net),
-`prod` (catchvideo.net).
+Two modes per browser: `dev` (localhost:3005) and `prod` (catchvideo.net).
 
 ```bash
 # Firefox
@@ -49,20 +48,16 @@ pnpm build:prod:lite       # → dist/prod-lite.zip
 
 ## Deployment to the website
 
-The packages are served from the website at `/downloads/` under public names
-that keep the channel — `catchvideo-addon-{beta,prod}{-lite}.{zip,xpi}` — so
-the served channel can never be mixed up. The frontend picks `-beta` or
-`-prod` via `NUXT_PUBLIC_ADD_ON_BETA`. Copy both channels after building
-(`build:prod`/`build:beta` already run the package step):
+The packages are served from the website at `/downloads/` as
+`catchvideo-addon-prod{-lite}.{zip,xpi}`. Copy them after building
+(`build:prod` already runs the package step):
 
 ```bash
 cd addon
-for ch in beta prod; do
-  cp chrome/dist/catchvideo-addon-*-$ch.zip           ../frontend/public/downloads/catchvideo-addon-$ch.zip
-  cp chrome/dist/catchvideo-addon-*-$ch-lite.zip      ../frontend/public/downloads/catchvideo-addon-$ch-lite.zip
-  cp firefox/dist/catchvideo-addon-*-$ch.xpi          ../frontend/public/downloads/catchvideo-addon-$ch.xpi
-  cp firefox/dist/catchvideo-addon-*-$ch-lite.xpi     ../frontend/public/downloads/catchvideo-addon-$ch-lite.xpi
-done
+cp chrome/dist/catchvideo-addon-*-prod.zip            ../frontend/public/downloads/catchvideo-addon-prod.zip
+cp chrome/dist/catchvideo-addon-*-prod-lite.zip       ../frontend/public/downloads/catchvideo-addon-prod-lite.zip
+cp firefox/dist/catchvideo-addon-*-prod.xpi           ../frontend/public/downloads/catchvideo-addon-prod.xpi
+cp firefox/dist/catchvideo-addon-*-prod-lite.xpi      ../frontend/public/downloads/catchvideo-addon-prod-lite.xpi
 ```
 
 (see `frontend/public/images/addon-debug/README.md` for the exact names)

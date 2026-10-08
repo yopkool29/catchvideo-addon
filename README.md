@@ -3,8 +3,7 @@
 Browser extensions that add a **Catch!** button on YouTube and act as a
 CORS/UA proxy so [catchvideo.net](https://catchvideo.net) can fetch video streams directly.
 
-This repository is a submodule of [catchvideo4.net](https://github.com/yopkool29/catchvideo4.net)
-mounted at `addon/`.
+This repository is a submodule of `catchvideo4.net` mounted at `addon/`.
 
 ## Structure
 

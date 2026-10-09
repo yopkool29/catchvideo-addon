@@ -72,7 +72,8 @@ window.addEventListener('message', async (event) => {
 				headers: data.headers,
 				body: data.body,
 				stripHeaders: data.stripHeaders,
-				injectHeaders: data.injectHeaders
+				injectHeaders: data.injectHeaders,
+				withCookies: data.withCookies
 			})
 			window.postMessage({
 				type: 'catchvideo-fetch-with-headers-result',

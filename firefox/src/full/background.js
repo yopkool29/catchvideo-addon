@@ -127,7 +127,7 @@ function performFetch(args) {
 // Unified fetch: used by both the browser proxy (catchvideo-fetch) and
 // the download path (fetch-with-headers). Body is base64 in/out.
 // Splits headers into standard (fetch) vs forbidden (webRequest injection).
-async function performFetchInner({ url, method, headers, body, stripHeaders, injectHeaders }) {
+async function performFetchInner({ url, method, headers, body, stripHeaders, injectHeaders, withCookies }) {
 	const allHeaders = headers || {}
 	const userAgent = allHeaders['User-Agent'] || allHeaders['user-agent'] || ''
 
@@ -148,7 +148,9 @@ async function performFetchInner({ url, method, headers, body, stripHeaders, inj
 	// Dailymotion: needs cookies (access_token/client_token) to bypass 401 on GraphQL API.
 	const fetchUrl = url || ''
 	const cookieSites = ['tiktok.com', 'dailymotion.com']
-	const needsCookies = cookieSites.some(d => fetchUrl.includes(d))
+	// withCookies: requested by the site when a CDN rejects cookie-less
+	// downloads (401/403/503) — same mechanism as the builtin cookie sites.
+	const needsCookies = cookieSites.some(d => fetchUrl.includes(d)) || withCookies === true
 	const credentialsMode = needsCookies ? 'include' : 'omit'
 
 	const fetchOptions = {
@@ -229,6 +231,7 @@ function handleMessage(request, sender, sendResponse) {
 			body: request.body,
 			stripHeaders: request.stripHeaders,
 			injectHeaders: request.injectHeaders,
+			withCookies: request.withCookies,
 		})
 			.then(result => sendResponse({ ...result }))
 			.catch(err => sendResponse({ status: 'error', reason: err.message }))

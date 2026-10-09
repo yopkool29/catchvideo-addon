@@ -20,7 +20,7 @@ function arrayBufferToBase64(buffer) {
 
 // Simple fetch — no header modification, no cookie injection.
 // credentials: 'omit' to avoid sending browser cookies that break yt-dlp parsing.
-async function performFetch({ url, method, headers, body }) {
+async function performFetch({ url, method, headers, body, withCookies }) {
 	const allHeaders = headers || {}
 
 	// Filter out headers that fetch() cannot set (browser will handle them)
@@ -40,7 +40,8 @@ async function performFetch({ url, method, headers, body }) {
 	// TikTok/Instagram/Dailymotion: need browser cookies to bypass anti-bot/401.
 	const fetchUrl = url || ''
 	const cookieSites = ['tiktok.com', 'instagram.com', 'dailymotion.com']
-	const needsCookies = cookieSites.some(d => fetchUrl.includes(d))
+	// withCookies: requested by the site when a CDN rejects cookie-less downloads.
+	const needsCookies = cookieSites.some(d => fetchUrl.includes(d)) || withCookies === true
 
 	const fetchOptions = {
 		method: method || 'GET',
@@ -111,6 +112,7 @@ function handleMessage(request, sender, sendResponse) {
 			method: request.method,
 			headers: request.headers,
 			body: request.body,
+			withCookies: request.withCookies,
 		})
 			.then(result => sendResponse({ ...result }))
 			.catch(err => sendResponse({ status: 'error', reason: err.message }))
